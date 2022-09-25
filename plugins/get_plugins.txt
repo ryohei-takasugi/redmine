@@ -1,0 +1,9 @@
+git clone https://github.com/happy-se-life/kanban.git
+git clone https://github.com/suer/redmine_japanese_help.git
+git clone https://github.com/agileware-jp/redmine_issue_templates.git
+git clone https://github.com/onozaty/redmine-view-customize.git view_customize
+git clone https://github.com/gelin/plantuml-redmine-macro.git plantuml_macro
+git clone https://github.com/tkusukawa/redmine_work_time.git
+git clone https://github.com/onozaty/redmine_issue_assign_notice.git
+git clone https://github.com/suer/redmine_issues_summary_graph.git
+git clone https://github.com/ayapapa/redmine_backlogs.git -b redmine4
