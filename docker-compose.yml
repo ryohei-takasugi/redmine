@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  redmine:
+    image: redmine:5.0.2-bullseye
+    container_name: redmine
+    ports:
+      - 3000:3000
+    volumes:
+      - ./plugins:/usr/src/redmine/plugins
+      - ./themes:/usr/src/redmine/public/themes
+      - ./files:/usr/src/redmine/files
+      - ./sqlite:/usr/src/redmine/sqlite
+    environment:
+#      REDMINE_DB_MYSQL: redmine-db
+#      REDMINE_DB_USERNAME: redmine
+#      REDMINE_DB_PASSWORD: redmine
+      TZ: Asia/Tokyo
+ #   depends_on:
+ #     - redmine-db
+    restart: always
+
+  plantuml:
+    container_name: plantuml-server
+    image: plantuml/plantuml-server:jetty
+    restart: always
+
+#  redmine-db:
+#    image: mysql:8.0-oracle
+#    container_name: redmine-db
+#    ports:
+#      - 3306:3306
+#    volumes:
+#      - ./mysql/data:/var/lib/mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: redmine
+#      MYSQL_DATABASE: redmine
+#      MYSQL_USER: redmine
+#      MYSQL_PASSWORD: redmine
+#      TZ: "Asia/Tokyo"

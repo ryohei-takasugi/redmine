@@ -1,0 +1,67 @@
+## 1. dark mode
+
+
+<!--
+パスのパターン:.*
+挿入位置:全ページのヘッダ
+種別:HTML
+-->
+
+<style>
+    .darkmode-layer,
+    .darkmode-toggle {
+        z-index: 500;
+    }
+
+    .darkmode-toggle .darkicon {
+        font-size: 13px;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    .darkmode-toggle--white .darkicon:before {
+        content: "Light";
+        font-size: 12px;
+        color: #000;
+    }
+
+    .darkmode-toggle--white .darkicon {
+        font-size: 0px;
+    }
+
+    .darkmode-toggle,
+    .darkmode-layer {
+        width: 3.0rem !important;
+        height: 3.0rem !important;
+    }
+
+    .darkmode-layer--simple {
+        width: 100% !important;
+        height: 100% !important;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+    $(function() {
+        const options = {
+            bottom: '12px',
+            right: '40px',
+            left: 'unset',
+            label: '<span class="darkicon">Dark</span>',
+        }
+        const ua = navigator.userAgent;
+        if (ua.indexOf('Trident') !== -1) {
+            //IE11の場合は表示しない
+        } else {
+            new Darkmode(options).showWidget();
+        }
+    })
+</script>
+
+
+
+
+git clone https://github.com/ixti/redmine_tags.git
+
