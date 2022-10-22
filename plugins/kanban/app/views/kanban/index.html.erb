@@ -1,0 +1,385 @@
+<!-- Javascript -->
+<script>
+  var login_user_id = "<%= @current_user.id %>";
+  var label_recent_history_is_here = "<%= I18n.t(:kanban_label_recent_history_is_here) %>";
+  var label_add_notes = "<%= I18n.t(:kanban_label_add_notes) %>";
+  var option_display_comment_dialog_when_drop = "<%= Constants::DISPLAY_COMMENT_DIALOG_WHEN_DROP %>";
+  window.onload = function(){
+    $(window).scrollTop(<%= params[:scroll_top] %>);
+  }
+</script>
+<script src="./javascripts/context_menu.js"></script>
+<%= javascript_include_tag "jquery.floatThead", :plugin => "kanban" %>
+<%= javascript_include_tag "hotkeys", :plugin => "kanban" %>
+<%= javascript_include_tag "kanban", :plugin => "kanban" %>
+<!-- CSS -->
+<link rel="stylesheet" media="screen" href="./stylesheets/context_menu.css">
+<%= stylesheet_link_tag 'kanban', :plugin => 'kanban' %>
+<div class="contextual">
+  <% if @project_id.blank? != true then %>
+    <a class="icon icon-add new-issue" href="./projects/<%= @project_id %>/issues/new"><%= I18n.t(:label_issue_new) %></a>
+  <% else %>
+    <a class="icon icon-add new-issue" href="./issues/new"><%= I18n.t(:label_issue_new) %></a>
+  <% end %>
+</div>
+<!-- H2 title -->
+<h2><% if Constants::DISPLAY_USER_AVATOR == 1 then %><%= avatar(@user, :size => "24") %><% end %><%= @user.name %><%= I18n.t(:kanban_label_title) %></h2>
+<!-- Form for filters -->
+<form id="form1" action="" method="GET">
+<!-- This is the part that opens and closes -->
+<fieldset id="upper_filters" class="collapsible collapsed">
+  <legend class="icon icon-collapsed" onclick="toggleFieldset(this);"><%= I18n.t(:label_filter_plural) %></legend>
+  <div style="display: none;">
+    <table>
+      <tr>
+        <td style="width: 100px">
+          <label><%= I18n.t(:field_updated_on) %></label>
+        </td>
+        <td>
+          <select name="updated_within">
+            <option value="unspecified" <% if @updated_within == "unspecified" then %> selected <% end %>><%= I18n.t(:kanban_label_unspecified) %></option>
+            <option value="1"  <% if @updated_within == "1"  then %> selected <% end %>><%= I18n.t(:kanban_label_within_1_day) %></option>
+            <option value="3"  <% if @updated_within == "3"  then %> selected <% end %>><%= I18n.t(:kanban_label_within_3_days) %></option>
+            <option value="7"  <% if @updated_within == "7"  then %> selected <% end %>><%= I18n.t(:kanban_label_within_1_week) %></option>
+            <option value="14" <% if @updated_within == "14" then %> selected <% end %>><%= I18n.t(:kanban_label_within_2_weeks) %></option>
+            <option value="31" <% if @updated_within == "31" then %> selected <% end %>><%= I18n.t(:kanban_label_within_1_month) %></option>
+            <option value="62" <% if @updated_within == "62" then %> selected <% end %>><%= I18n.t(:kanban_label_within_2_months) %></option>
+            <option value="93" <% if @updated_within == "93" then %> selected <% end %>><%= I18n.t(:kanban_label_within_3_months) %></option>
+          </select>
+        </td>
+        <td style="width: 100px">  
+          <label><%= I18n.t(:field_closed_on) %></label>
+        </td>
+        <td>
+          <select name="done_within">
+            <option value="unspecified" <% if @done_within == "unspecified" then %> selected <% end %>><%= I18n.t(:kanban_label_unspecified) %></option>
+            <option value="1"  <% if @done_within == "1"  then %> selected <% end %>><%= I18n.t(:kanban_label_within_1_day) %></option>
+            <option value="3"  <% if @done_within == "3"  then %> selected <% end %>><%= I18n.t(:kanban_label_within_3_days) %></option>
+            <option value="7"  <% if @done_within == "7"  then %> selected <% end %>><%= I18n.t(:kanban_label_within_1_week) %></option>
+            <option value="14" <% if @done_within == "14" then %> selected <% end %>><%= I18n.t(:kanban_label_within_2_weeks) %></option>
+            <option value="31" <% if @done_within == "31" then %> selected <% end %>><%= I18n.t(:kanban_label_within_1_month) %></option>
+            <option value="62" <% if @done_within == "62" then %> selected <% end %>><%= I18n.t(:kanban_label_within_2_months) %></option>
+            <option value="93" <% if @done_within == "93" then %> selected <% end %>><%= I18n.t(:kanban_label_within_3_months) %></option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 100px">  
+          <label><%= I18n.t(:field_due_date) %></label>
+        </td>
+        <td>
+          <select name="due_date" id="due_date">
+            <option value="unspecified" <% if @due_date == "unspecified" then %> selected <% end %>><%= I18n.t(:kanban_label_unspecified) %></option>
+            <option value="overdue" <% if @due_date == "overdue" then %> selected <% end %>><%= I18n.t(:kanban_label_overdue) %></option>
+            <option value="today" <% if @due_date == "today" then %> selected <% end %>><%= I18n.t(:kanban_label_today) %></option>
+            <option value="tommorow" <% if @due_date == "tommorow" then %> selected <% end %>><%= I18n.t(:kanban_label_tommorow) %></option>
+            <option value="thisweek" <% if @due_date == "thisweek" then %> selected <% end %>><%= I18n.t(:kanban_label_thisweek) %></option>
+            <option value="nextweek" <% if @due_date == "nextweek" then %> selected <% end %>><%= I18n.t(:kanban_label_nextweek) %></option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <!-- Tracker -->
+        <td style="width: 100px">
+          <label><%= I18n.t(:field_tracker) %></label>
+        </td>
+        <td>
+          <select name="tracker_id" id="tracker_id">
+            <option value="unspecified" <% if @tracker_id == "unspecified" then %> selected <% end %>><%= I18n.t(:kanban_label_unspecified) %></option>
+            <% @trackers.each{|tracker| %>
+              <option value="<%= tracker.id %>" <% if @tracker_id.to_i == tracker.id then %> selected <% end %>><%= tracker.name %></option>
+            <% } %>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 100px">
+          <label><%= I18n.t(:field_assigned_to) %></label>
+        </td>
+        <td>
+          <select name="user_id" id="user_id">
+            <option value="unspecified" <% if @user_id == "unspecified" then %> selected <% end %>><%= I18n.t(:kanban_label_unspecified) %></option>
+            <% @selectable_users.each{|user| %>
+              <option value="<%= user.id %>" <% if @user_id.to_i == user.id then %> selected <% end %>><%= user.name %></option>
+            <% } %>
+          </select>
+        </td>
+        <td style="width: 100px">
+          <label><%= I18n.t(:label_group) %></label>
+        </td>
+        <td>
+          <select name="group_id">
+            <option value="unspecified" <% if @group_id == "unspecified" then %> selected <% end %>><%= I18n.t(:kanban_label_unspecified) %></option>
+            <% @selectable_groups.each{|group| %>
+              <option value="<%= group.id %>" <% if @group_id.to_i == group.id then %> selected <% end %>><%= group.name %></option>
+            <% } %>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 100px">
+          <label><%= I18n.t(:label_project) %> & <%= I18n.t(:label_subproject_plural) %></label>
+        </td>
+        <td>
+          <select name="project_all">
+            <% if !@project_id.blank? then %>
+              <option value="0" <% if @project_all == "0" then %> selected <% end %>><%= @project.name %></option>
+            <% end %>
+            <option value="1" <% if @project_all == "1" then %> selected <% end %>><%= I18n.t(:kanban_label_unspecified) %></option>
+          </select>
+        </td>
+      </tr>
+      <% if @project_all == "0" then %>
+        <tr>
+          <td style="width: 100px">
+            <label><%= I18n.t(:label_version) %></label>
+          </td>
+          <td>
+            <select name="version_id">
+              <option value="unspecified" <% if @version_id == "unspecified" then %> selected <% end %>><%= I18n.t(:kanban_label_unspecified) %></option>
+              <% @project.versions.each{|version| %>
+                <% if @open_versions == "1" then %>
+                  <% if version.open? then %>
+                    <option value="<%= version.id %>" <% if @version_id.to_i == version.id then %> selected <% end %>><%= version.name %></option>
+                  <% end %>
+                <% else %>
+                  <option value="<%= version.id %>" <% if @version_id.to_i == version.id then %> selected <% end %>><%= version.name %></option>
+                <% end %>
+              <% } %>
+            </select>
+            <% if @open_versions == "1" then %>
+              <%= check_box_tag :cbx, 1, {:checked => "checked"} %>
+            <% else %>
+              <%= check_box_tag :cbx, 1 %>
+            <% end %>
+            <%= label_tag :cbx, I18n.t(:version_status_open) %>
+            <%= hidden_field_tag :open_versions, @open_versions %>
+          </td>
+        </tr>
+      <% end %>
+      <tr>
+        <td style="width: 100px">
+          <label><%= I18n.t(:kanban_label_wip_limits) %></label>
+        </td>
+        <td>
+          <select name="wip_max" id="wip_max">
+            <option value="1" <% if @wip_max == "1" then %> selected <% end %>>1</option>
+            <option value="2" <% if @wip_max == "2" then %> selected <% end %>>2</option>
+            <option value="3" <% if @wip_max == "3" then %> selected <% end %>>3</option>
+            <option value="4" <% if @wip_max == "4" then %> selected <% end %>>4</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 100px">
+          <label><%= I18n.t(:kanban_label_card_size) %></label>
+        </td>
+        <td>
+          <select name="card_size" id="card_size">
+            <option value="normal_days_left" <% if @card_size == "normal_days_left" then %> selected <% end %>><%= I18n.t(:kanban_label_card_size_normal_days_left) %></option>
+            <option value="normal_estimated_hours" <% if @card_size == "normal_estimated_hours" then %> selected <% end %>><%= I18n.t(:kanban_label_card_size_normal_estimated_hours) %></option>
+            <option value="normal_spent_hours" <% if @card_size == "normal_spent_hours" then %> selected <% end %>><%= I18n.t(:kanban_label_card_size_normal_spent_hours) %></option>
+            <option value="small" <% if @card_size == "small" then %> selected <% end %>><%= I18n.t(:kanban_label_card_size_small) %></option>
+          </select>
+        </td>
+      </tr>
+      <tr>  
+        <td style="width: 100px">
+          <label><%= I18n.t(:kanban_label_show_ancestors) %></label>
+        </td>
+        <td>
+          <% if @show_ancestors == "1" then %>
+            <%= check_box_tag :cb_ancestor, 1, {:checked => "checked"} %>
+          <% else %>
+            <%= check_box_tag :cb_ancestor, 1 %>
+          <% end %>
+          <%= hidden_field_tag :show_ancestors, @show_ancestors %>
+        </td>        
+      </tr>
+    </table>
+  </div>
+</fieldset>
+<!-- This is the part that opens and closes -->
+<fieldset id="lower_filters" class="collapsible collapsed">
+  <legend class="icon icon-collapsed" onclick="toggleFieldset(this);"><%= I18n.t(:kanban_label_fields) %></legend>
+  <div style="display: none;">
+    <table>
+      <tr>
+        <td>
+          <!-- checkboxes for status fields -->
+          <% @issue_statuses.each_with_index do |status,index| %>
+            <% if @status_fields_array.include?(status.id) then flag = true else flag = false end %>
+            <div style="float: left;">
+                <%= check_box "status_fields", status.id, {:checked => flag} %><%= status.name %>　
+            </div>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+  </div>
+</fieldset>
+<input name="project_id" type="hidden" value="<%= @project_id %>">
+<input name="scroll_top" id="scroll_top" type="hidden" value="0">
+</form>
+<!-- Update and clear links -->
+<p class="buttons">
+  <a href="#" onclick="$('#form1').submit(); return false;" class="icon icon-checked"><%= I18n.t(:button_apply) %></a>
+  <% if @project_id.blank? == true then %>
+    <a class="icon icon-reload" href="./kanban?clear=1"><%= I18n.t(:button_clear) %></a>
+  <% else %>
+    <a class="icon icon-reload" href="./kanban?clear=1&project_id=<%= @project_id %>"><%= I18n.t(:button_clear) %></a>
+  <% end %>
+  <a href="#" onclick="$('#keyboard-chortcut-dialog').dialog('open'); return false;" class="icon icon-help"><%= I18n.t(:button_keyboard_shortcuts) %></a>
+</p>
+<!-- Form for issue operation -->
+<form data-cm-url="./issues/context_menu" action="./issues" accept-charset="UTF-10" method="post">
+<div>
+  <!-- Main table -->
+  <table id="kanban_table" class="list issues odd-even" style="table-layout: fixed;">
+    <thead>
+      <!-- Table header row -->
+      <tr class="group">
+        <th style="width: 10px;">
+        </th>
+        <!-- Table header cols -->
+        <% @status_fields_array.each {|status_id| %>
+          <th style="min-width: 200px;"><%= @issue_statuses_hash[status_id] %> <span id="counter-<%= status_id %>" class="count" style="background-color: #d5d5d5"><%= @issues_hash[status_id].length %></span></th>
+        <% } %>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- User loop -->
+      <% @user_id_array.each{|uid| %>
+        <!-- Rows -->
+        <tr class="group">
+          <td>
+            <% if uid != nil then %>
+              <% if @group_id_array.include?(uid) then %>
+                <!-- When group -->
+                <img src="./images/group.png">
+                <p style="writing-mode: vertical-rl; white-space: nowrap;"><%= @user_and_group_names_hash[uid] %></p>
+              <% else %>
+                <!-- When user -->
+                <% if Constants::DISPLAY_USER_AVATOR == 1 then %><%= avatar(@selectable_users.find(uid), :size => "16") %>&nbsp;<% end %>
+                <p style="writing-mode: vertical-rl; white-space: nowrap;"><%= @user_and_group_names_hash[uid] %></p>
+              <% end %>
+            <% else %>
+              <p style="writing-mode: vertical-rl; white-space: nowrap;">Not&nbsp;Assigned</p>
+            <% end %>
+          </td>
+          <!-- Cols -->
+          <% @status_fields_array.each {|status_id| %>
+            <td id="field-<%= status_id %>-<%= uid %>" style="vertical-align: top;">
+              <% if status_id == Constants::WIP_COUNT_STATUS_FIELD %>
+                <!-- Display exceeded WIP warning message -->
+                <% if @wip_hash[uid].to_i > @wip_max.to_i then %>
+                  <div class="flash error" id="wip_error-<%= uid %>" style="margin: 8px 4px 8px 4px;"><%= I18n.t(:kanban_label_wip_limit_exceeded) %></div>
+                <% else %>
+                  <div class="flash error" id="wip_error-<%= uid %>" style="margin: 8px 4px 8px 4px; display: none;"><%= I18n.t(:kanban_label_wip_limit_exceeded) %></div>
+                <% end %>
+              <% end %>
+              <% @issues_hash[status_id].each {|issue| %>
+                <% if uid == issue.assigned_to_id then %>
+                  <% if @card_size == "small" then %>
+                    <!-- SMALL SIZE card -->
+                      <%= render partial: 'kanban/small_card', locals: { issue: issue } %>
+                  <% elsif @card_size == "normal_days_left" then %>
+                    <!-- NORMAL SIZE card display with days left -->
+                      <%= render partial: 'kanban/normal_card_days_left', locals: { issue: issue } %>
+                  <% elsif @card_size == "normal_estimated_hours" then %>
+                    <!-- NORMAL SIZE card display with estimated hours -->
+                      <%= render partial: 'kanban/normal_card_estimated_hours', locals: { issue: issue } %>
+                  <% else %>
+                    <!-- NORMAL SIZE card display with spent hours -->
+                      <%= render partial: 'kanban/normal_card_spent_hours', locals: { issue: issue } %>
+                  <% end %>
+                <% end %>
+              <% } %>
+            </td>
+          <% } %>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+</form>
+<!-- Hidden values for each user -->
+<% @user_id_array.each {|uid| %>
+  <% if uid != nil then %>
+    <!-- Number of WIP issues --> 
+    <p id="wip-<%= uid %>" style="display: none;"><%= @wip_hash[uid] %></p>
+    <!-- User name on card -->
+    <p id="user_name_user_id-<%= uid %>" style="display: none;"><%= @user_and_group_names_hash[uid] %></p>
+  <% end %>
+<% } %>
+<!-- Field ID for display WIP warning -->
+<p id="wip-field" style="display: none;"><%= Constants::WIP_COUNT_STATUS_FIELD %></p>
+<!-- Hidden values for saving issue status -->
+<input type="hidden" id="save_card_id">
+<input type="hidden" id="save_from_field_id">
+<input type="hidden" id="save_to_field_id">
+<!-- Comment dialog definition -->
+<div id="comment-dialog" style="display: none;">
+  <td><textarea id="comment-of-dialog" rows="5" cols="40"></textarea></td>
+</div>
+<!-- Description dialog of keyboard shortcut -->
+<div id="keyboard-chortcut-dialog" style="display: none;">
+  <table>
+    <tr>
+      <td>o</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_0) %></td>
+    </tr>
+    <tr>
+      <td>e</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_1) %></td>
+    </tr>
+    <tr>
+      <td>d+u</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_2) %></td>
+    </tr>
+    <tr>
+      <td>d+o</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_3) %></td>
+    </tr>
+    <tr>
+      <td>d+t</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_4) %></td>
+    </tr>
+    <tr>
+      <td>d+w</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_5) %></td>
+    </tr>
+    <tr>
+      <td>n</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_6) %></td>
+    </tr>
+    <tr>
+      <td>k</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_7) %></td>
+    </tr>
+    <tr>
+      <td>p</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_11) %></td>
+    </tr>
+    <tr>
+      <td>s</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_8) %></td>
+    </tr>
+    <tr>
+      <td>l</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_9) %></td>
+    </tr>
+    <tr>
+      <td>h</td>
+      <td>: <%= I18n.t(:kanban_keyboard_shortcuts_help_10) %></td>
+    </tr>
+  </table>
+</div>
+<!-- Field IDs of open issues -->
+<% string_open_fields="" %>
+<% @status_fields_array.each {|status_id| %>
+  <% if @done_issue_statuses_array.include?(status_id) == false then %>
+    <% string_open_fields = string_open_fields + " " + status_id.to_s %>
+  <% end %>
+<% } %>
+<p id="open-field-ids" style="display: none;"><%= string_open_fields.strip %></p>

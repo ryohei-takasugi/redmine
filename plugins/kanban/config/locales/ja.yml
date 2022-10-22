@@ -1,0 +1,53 @@
+# Japanese strings go here for Rails i18n
+ja:
+  kanban_menu_caption: かんばん
+  
+  kanban_label_title: さんのかんばん
+  kanban_label_unspecified: 指定なし
+  kanban_label_wip_limits: WIP制限
+  kanban_label_wip_limit_exceeded: WIP制限超過
+  kanban_label_fields: フィールド
+  kanban_label_update: 更新
+
+  kanban_label_within_1_day: 1日以内
+  kanban_label_within_3_days: 3日以内
+  kanban_label_within_1_week: 1週間以内
+  kanban_label_within_2_weeks: 2週間以内
+  kanban_label_within_1_month: 1ヶ月以内
+  kanban_label_within_2_months: 2ヶ月以内
+  kanban_label_within_3_months: 3ヶ月以内
+
+  kanban_label_recent_history_is_here: ここに最近の履歴が表示されます。
+  kanban_label_recent_history: 最近の履歴
+  kanban_label_add_notes: 注記の追加
+  
+  kanban_label_overdue: 期限切れ
+  kanban_label_today: 今日
+  kanban_label_tommorow: 明日
+  kanban_label_thisweek: 今週
+  kanban_label_nextweek: 来週
+
+  kanban_label_days_left: "あと%{value}日"
+
+  kanban_label_card_size: カードサイズ
+  kanban_label_card_size_small: スモール
+  kanban_label_card_size_normal_days_left: ノーマル(期日との差)
+  kanban_label_card_size_normal_estimated_hours: ノーマル(予定工数)
+  kanban_label_card_size_normal_spent_hours: ノーマル(作業時間)
+
+  kanban_label_show_ancestors: 親タスクを表示する
+  
+  button_keyboard_shortcuts: ショートカット
+
+  kanban_keyboard_shortcuts_help_0: ログインユーザーのカードを表示
+  kanban_keyboard_shortcuts_help_1: プロジェクト全員のカードを表示
+  kanban_keyboard_shortcuts_help_2: 期限日を指定なしに設定
+  kanban_keyboard_shortcuts_help_3: 期限日を期限切れに設定
+  kanban_keyboard_shortcuts_help_4: 期限日を本日に設定
+  kanban_keyboard_shortcuts_help_5: 期限日を今週に設定
+  kanban_keyboard_shortcuts_help_6: 通常のカードサイズで表示(残日数)
+  kanban_keyboard_shortcuts_help_7: 通常のカードサイズで表示(予定工数)
+  kanban_keyboard_shortcuts_help_8: 小さいカードサイズで表示
+  kanban_keyboard_shortcuts_help_9: 全ての未解決のカードを選択
+  kanban_keyboard_shortcuts_help_10: このヘルプを表示
+  kanban_keyboard_shortcuts_help_11: 通常のカードサイズで表示(作業時間)

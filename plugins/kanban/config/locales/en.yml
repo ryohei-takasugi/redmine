@@ -1,0 +1,54 @@
+# English strings go here for Rails i18n
+en:
+  kanban_menu_caption: Kanban
+  
+  kanban_label_title: "'s Kanban"
+  kanban_label_unspecified: unspecified
+  kanban_label_wip_limits: WIP limits
+  kanban_label_wip_limit_exceeded: WIP limit exceeded
+  kanban_label_fields: Fields
+  kanban_label_update: Update
+
+  kanban_label_within_1_day: within 1day
+  kanban_label_within_3_days: within 3days
+  kanban_label_within_1_week: within 1week
+  kanban_label_within_2_weeks: within 2weeks
+  kanban_label_within_1_month: within 1month
+  kanban_label_within_2_months: within 2months
+  kanban_label_within_3_months: within 3months
+
+  kanban_label_recent_history_is_here: Recent history is displayed here
+  kanban_label_recent_history: Recent History
+  kanban_label_add_notes: Add Notes
+
+  kanban_label_overdue: Overdue
+  kanban_label_today: Today
+  kanban_label_tommorow: Tomorrow
+  kanban_label_thisweek: This week
+  kanban_label_nextweek: Next week
+
+  kanban_label_days_left: "%{value} days left"
+  kanban_hours_abbreviation: 'h'
+
+  kanban_label_card_size: Card size
+  kanban_label_card_size_small: Small
+  kanban_label_card_size_normal_days_left: Normal (diff. of due date)
+  kanban_label_card_size_normal_estimated_hours: Normal (estimated hours)
+  kanban_label_card_size_normal_spent_hours: Normal (spent hours)
+
+  kanban_label_show_ancestors: Show parent task
+
+  button_keyboard_shortcuts: Shortcuts
+
+  kanban_keyboard_shortcuts_help_0: Show login user only.
+  kanban_keyboard_shortcuts_help_1: Show everyone in the project.
+  kanban_keyboard_shortcuts_help_2: Set due date to unspecified.
+  kanban_keyboard_shortcuts_help_3: Set due date to overdue.
+  kanban_keyboard_shortcuts_help_4: Set due date to today.
+  kanban_keyboard_shortcuts_help_5: Set due date to this week.
+  kanban_keyboard_shortcuts_help_6: Show by normal size card with days left.
+  kanban_keyboard_shortcuts_help_7: Show by normal size card with estimated hours.
+  kanban_keyboard_shortcuts_help_8: Show by small size card.
+  kanban_keyboard_shortcuts_help_9: Select all open issues.
+  kanban_keyboard_shortcuts_help_10: Show this help.
+  kanban_keyboard_shortcuts_help_11: Show by normal size card with spent hours.
